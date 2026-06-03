@@ -67,3 +67,29 @@ Describe 'Get-LatestRelease' {
         { Get-LatestRelease -Repo 'foo/bar' } | Should -Throw -ExpectedMessage '*no SHA256SUMS*'
     }
 }
+
+Describe 'Test-DownloadIntegrity' {
+    BeforeAll {
+        $script:tmp = New-Item -ItemType Directory -Path (Join-Path $env:TEMP "wc-test-$([guid]::NewGuid())") -Force
+        $script:zipPath = Join-Path $script:tmp 'fake.zip'
+        Set-Content -Path $script:zipPath -Value 'hello' -NoNewline -Encoding ascii
+        $script:goodHash = (Get-FileHash $script:zipPath -Algorithm SHA256).Hash
+    }
+    AfterAll { Remove-Item $script:tmp -Recurse -Force -EA SilentlyContinue }
+
+    It 'returns true when hash matches' {
+        Mock Invoke-WebRequest { [pscustomobject]@{ Content = "$script:goodHash  fake.zip`n" } }
+        Test-DownloadIntegrity -ZipPath $script:zipPath -SumsUrl 'https://x' | Should -BeTrue
+    }
+
+    It 'throws when hash does not match' {
+        Mock Invoke-WebRequest { [pscustomobject]@{ Content = "0000000000000000000000000000000000000000000000000000000000000000  fake.zip" } }
+        { Test-DownloadIntegrity -ZipPath $script:zipPath -SumsUrl 'https://x' } |
+            Should -Throw -ExpectedMessage '*SHA256 mismatch*'
+    }
+
+    It 'is case-insensitive on the hash' {
+        Mock Invoke-WebRequest { [pscustomobject]@{ Content = "$($script:goodHash.ToLower())  fake.zip" } }
+        Test-DownloadIntegrity -ZipPath $script:zipPath -SumsUrl 'https://x' | Should -BeTrue
+    }
+}

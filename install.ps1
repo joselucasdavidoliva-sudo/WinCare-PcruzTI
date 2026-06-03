@@ -55,6 +55,22 @@ function Get-LatestRelease {
     }
 }
 
+function Test-DownloadIntegrity {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)][string]$ZipPath,
+        [Parameter(Mandatory)][string]$SumsUrl
+    )
+
+    $sums   = (Invoke-WebRequest -Uri $SumsUrl -UseBasicParsing).Content
+    $actual = (Get-FileHash -Path $ZipPath -Algorithm SHA256).Hash
+
+    if ($sums -notmatch [regex]::Escape($actual)) {
+        throw "SHA256 mismatch — expected one of the hashes in SHA256SUMS, got $actual"
+    }
+    return $true
+}
+
 # ----- Orchestrator -----
 function Start-Bootstrap {
     [CmdletBinding()]
