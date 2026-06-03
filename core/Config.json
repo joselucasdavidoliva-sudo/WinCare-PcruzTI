@@ -1,0 +1,11 @@
+﻿{
+    "FirstRun":  true,
+    "ShowDebug":  false,
+    "LastHealthScore":  0,
+    "AutoBackup":  true,
+    "AutoScroll":  true,
+    "Theme":  "Dark",
+    "WingetPath":  "",
+    "LogRetentionDays":  30,
+    "Language":  "pt-BR"
+}

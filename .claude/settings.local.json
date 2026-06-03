@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"/c/Users/Cruz/OneDrive/Desktop/WinCare-Pro/{core,modules,ui,output/\")",
+      "Bash(powershell -NoProfile -Command \":*)",
+      "Bash(powershell -NoProfile -Command \"$files = @\\(''c:\\\\Users\\\\Cruz\\\\OneDrive\\\\Desktop\\\\WinCare-Pro\\\\WinCare.ps1'',''c:\\\\Users\\\\Cruz\\\\OneDrive\\\\Desktop\\\\WinCare-Pro\\\\ui\\\\ProgressPanel.ps1'',''c:\\\\Users\\\\Cruz\\\\OneDrive\\\\Desktop\\\\WinCare-Pro\\\\ui\\\\Dashboard.ps1'',''c:\\\\Users\\\\Cruz\\\\OneDrive\\\\Desktop\\\\WinCare-Pro\\\\ui\\\\Theme.ps1'',''c:\\\\Users\\\\Cruz\\\\OneDrive\\\\Desktop\\\\WinCare-Pro\\\\core\\\\UIBuilder.ps1'',''c:\\\\Users\\\\Cruz\\\\OneDrive\\\\Desktop\\\\WinCare-Pro\\\\core\\\\Logger.ps1'',''c:\\\\Users\\\\Cruz\\\\OneDrive\\\\Desktop\\\\WinCare-Pro\\\\core\\\\Config.ps1'',''c:\\\\Users\\\\Cruz\\\\OneDrive\\\\Desktop\\\\WinCare-Pro\\\\modules\\\\01_WindowsMaintenance.ps1'',''c:\\\\Users\\\\Cruz\\\\OneDrive\\\\Desktop\\\\WinCare-Pro\\\\modules\\\\02_WindowsUpdate.ps1'',''c:\\\\Users\\\\Cruz\\\\OneDrive\\\\Desktop\\\\WinCare-Pro\\\\modules\\\\03_BugFixer_04_OfficeSuite.ps1'',''c:\\\\Users\\\\Cruz\\\\OneDrive\\\\Desktop\\\\WinCare-Pro\\\\modules\\\\05_RegistryRepair_06_AppRemover.ps1'',''c:\\\\Users\\\\Cruz\\\\OneDrive\\\\Desktop\\\\WinCare-Pro\\\\modules\\\\07_HealthCheck_08_ComponentTest.ps1'',''c:\\\\Users\\\\Cruz\\\\OneDrive\\\\Desktop\\\\WinCare-Pro\\\\modules\\\\09_WingetManager.ps1'',''c:\\\\Users\\\\Cruz\\\\OneDrive\\\\Desktop\\\\WinCare-Pro\\\\ui\\\\Settings.ps1'',''c:\\\\Users\\\\Cruz\\\\OneDrive\\\\Desktop\\\\WinCare-Pro\\\\ui\\\\LogViewer.ps1''\\); foreach \\($f in $files\\) { $errors = $null; $content = Get-Content $f -Raw; [System.Management.Automation.PSParser]::Tokenize\\($content, [ref]$errors\\) | Out-Null; if \\($errors.Count -gt 0\\) { Write-Host \\(''ERROR: '' + $f + '' \\('' + $errors.Count + '' errors\\)''\\); $errors | ForEach-Object { Write-Host \\(''  Line '' + $_.Token.StartLine + '': '' + $_.Message\\) } } else { Write-Host \\(''OK: '' + $f\\) } }\")",
+      "Bash(powershell.exe -NoProfile -NonInteractive -Command \":*)"
+    ]
+  }
+}

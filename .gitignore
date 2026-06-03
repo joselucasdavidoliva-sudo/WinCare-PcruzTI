@@ -1,0 +1,6 @@
+output/
+*.log
+*.zip
+SHA256SUMS
+.vs/
+.idea/
