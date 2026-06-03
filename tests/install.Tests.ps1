@@ -19,3 +19,51 @@ Describe 'install.ps1 dot-source safety' {
             Should -BeNullOrEmpty
     }
 }
+
+Describe 'Get-LatestRelease' {
+    BeforeEach {
+        Mock Invoke-RestMethod {
+            return [pscustomobject]@{
+                tag_name = 'v1.2.3'
+                assets   = @(
+                    [pscustomobject]@{ name = 'WinCare-Pro-v1.2.3.zip'; browser_download_url = 'https://example/zip' }
+                    [pscustomobject]@{ name = 'SHA256SUMS';             browser_download_url = 'https://example/sums' }
+                )
+            }
+        }
+    }
+
+    It 'returns Tag, ZipUrl and SumsUrl' {
+        $r = Get-LatestRelease -Repo 'foo/bar'
+        $r.Tag     | Should -Be 'v1.2.3'
+        $r.ZipUrl  | Should -Be 'https://example/zip'
+        $r.SumsUrl | Should -Be 'https://example/sums'
+    }
+
+    It 'calls the correct GitHub API endpoint' {
+        Get-LatestRelease -Repo 'foo/bar' | Out-Null
+        Should -Invoke Invoke-RestMethod -ParameterFilter {
+            $Uri -eq 'https://api.github.com/repos/foo/bar/releases/latest'
+        }
+    }
+
+    It 'throws when no zip asset is present' {
+        Mock Invoke-RestMethod {
+            return [pscustomobject]@{
+                tag_name = 'v1.2.3'
+                assets   = @([pscustomobject]@{ name = 'SHA256SUMS'; browser_download_url = 'https://x' })
+            }
+        }
+        { Get-LatestRelease -Repo 'foo/bar' } | Should -Throw -ExpectedMessage '*no zip*'
+    }
+
+    It 'throws when no SHA256SUMS asset is present' {
+        Mock Invoke-RestMethod {
+            return [pscustomobject]@{
+                tag_name = 'v1.2.3'
+                assets   = @([pscustomobject]@{ name = 'WinCare.zip'; browser_download_url = 'https://x' })
+            }
+        }
+        { Get-LatestRelease -Repo 'foo/bar' } | Should -Throw -ExpectedMessage '*no SHA256SUMS*'
+    }
+}

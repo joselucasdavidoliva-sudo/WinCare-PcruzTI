@@ -35,6 +35,26 @@ function Test-AdminPrivilege {
     return [bool]$pr.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
+function Get-LatestRelease {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)][string]$Repo)
+
+    $url = "https://api.github.com/repos/$Repo/releases/latest"
+    $rel = Invoke-RestMethod -Uri $url -Headers @{ 'User-Agent' = 'WinCare-Installer' }
+
+    $zip  = $rel.assets | Where-Object { $_.name -like '*.zip' }    | Select-Object -First 1
+    $sums = $rel.assets | Where-Object { $_.name -eq 'SHA256SUMS' } | Select-Object -First 1
+
+    if (-not $zip)  { throw "Release $($rel.tag_name) has no zip asset" }
+    if (-not $sums) { throw "Release $($rel.tag_name) has no SHA256SUMS asset" }
+
+    return [pscustomobject]@{
+        Tag     = $rel.tag_name
+        ZipUrl  = $zip.browser_download_url
+        SumsUrl = $sums.browser_download_url
+    }
+}
+
 # ----- Orchestrator -----
 function Start-Bootstrap {
     [CmdletBinding()]
